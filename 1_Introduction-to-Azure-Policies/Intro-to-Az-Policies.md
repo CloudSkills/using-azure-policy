@@ -20,12 +20,12 @@ Azure Policy helps give us the ability to ensure that our Azure resources comply
 ### Prerequisites
 You will need a valid Azure subscription and will need ## VALIDATE PERMISSIONS FOR POLICIES
 
-### How to access Azure Policy
+### Step 1 - How to access Azure Policy
 We can access Azure Policy from multiple locations within the Azure Portal.   The most direct way is to search for Azure Policy in the search bar
 
-!!! Insert video of browsing to Azure Policy
+![Accessing Azure Policy](1_Introduction-to-Azure-Policies/images/step-1-how-to-access-azure-policy.gif)
 
-### Azure Policy Components
+### Step 2 - Azure Policy Components
 Azure policy has a few key components that we need to understand before we can start to take advantage of its features. 
 
 #### Definitions
@@ -84,7 +84,7 @@ When assigning a policy you have to provide the following information
 
 !!! INSERT PICTURE OF AZURE POLICY ASSIGNMENTS
 
-### Creating our Policy Definition
+### Step 3 - Creating our Policy Definition
 Now that we understand the components of an Azure Policy lets create one for ourselves.  The goal of this policy will be to audit our resources to ensure they have the "CostCenter" tag.  
 
 To start let's get our definition setup.  From Azure Policy lets go to "Definitions" on the left.  
@@ -122,7 +122,7 @@ We want to update this so that it will still allow the resource to be created wi
 Now that we have everything set we can save the policy definition
 
 
-### Assigning the Policy Definition 
+### Step 4 - Assigning the Policy Definition 
 Now that we have created our definition we need to assign it.  We will be assigning this at the subscription level so it will run against all resources within that subscription.  
 
 From the Azure Policy page, we click on "Assignments" on the left side
@@ -151,7 +151,7 @@ Review the settings and then click on "Create"
 
 We have successfully created our fist Azure Policy!! (Champagne optional)
 
-### Reviewing Policies
+### Step 5 - Reviewing Policies
 Now that we have created our policy we need to ensure that is working as intended.  From the Azure Policy page select "Compliance" on the left. 
 
 We can now see our policy listed.  If we select the policy we can now review the various resources that CostCenter tag specified as well as those that do not. 
