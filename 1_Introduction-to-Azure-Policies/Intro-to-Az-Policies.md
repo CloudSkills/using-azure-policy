@@ -23,7 +23,7 @@ You will need a valid Azure subscription and will need ## VALIDATE PERMISSIONS F
 ### Step 1 - How to access Azure Policy
 We can access Azure Policy from multiple locations within the Azure Portal.   The most direct way is to search for Azure Policy in the search bar
 
-![Accessing Azure Policy](1_Introduction-to-Azure-Policies/images/step-1-how-to-access-azure-policy.gif)
+![Accessing Azure Policy](/images/step-1-how-to-access-azure-policy.gif)
 
 ### Step 2 - Azure Policy Components
 Azure policy has a few key components that we need to understand before we can start to take advantage of its features. 
