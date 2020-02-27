@@ -68,11 +68,11 @@ Below is an example of a policy definition.
 }
 ```
 
-As we can see the policy definitions are formatted using JSON.  If we look under the "PolicyRule" block we can see there is an "if/then" statement.  The "if" block is defining the resources and conditions that we are looking to validate.  The "then" block controls what action the definition will take if the conditions in the "if" block are met. 
+As we can see the policy definitions are formatted using JSON.  If we look under the "PolicyRule" block we can see there is an "if/then" statement.  The "if" block is defining the resources and conditions that we are looking to validate.  The "then" block controls what action the definition will take if the conditions in the "if" block is met. 
 
-Looking at the "If" block in the example above we can see that there are 2 conditions that the definition is looking for.  Since the conditions are in a "allOF" block then  both of the conditions must be met in order for the policy effect to apply. 
+Looking at the "If" block in the example above we can see that there are 2 conditions that the definition is looking for.  Since the conditions are in an "allOF" block then both of the conditions must be met for the policy effect to apply. 
 
-The first condition is looking specifically at the resource types.  The resource type must be a SQL Server in order for the condition to be true.  
+The first condition is looking specifically at the resource types.  The resource type must be a SQL Server for the condition to be true.  
 
 ```json
 {
@@ -82,7 +82,7 @@ The first condition is looking specifically at the resource types.  The resource
 ```
  The second condition is looking at all tags associated with the resource.  You can see it is using the concatenate template function to review the names of all of the tags.  
  
-Since we are looking to see if a tag is not defined in this example we need this condition to return a value of true if it the tag is not present.  This is why the "exists" value is set to "false".   
+Since we are looking to see if a tag is not defined in this example we need this condition to return a value of true if the tag is not present.  This is why the "exists" value is set to "false".   
 
 ```json
 {
@@ -114,7 +114,7 @@ When assigning a policy you have to provide the following information
 ### Step 3 - Creating our Policy Definition
 Now that we understand the components of an Azure Policy lets create one for ourselves.  The goal of this policy will be to audit our resources to ensure they have the "CostCenter" tag.  
 
-To start let's get our definition created.  We are going to use a built-in definition as out starting point.  From Azure Policy lets go to "Definitions" on the left.  
+To start let's get our definition created.  We are going to use a built-in definition as our starting point.  From Azure Policy lets go to "Definitions" on the left.  
 
 Filter the Category so we only see the "Tags" category.  
 
