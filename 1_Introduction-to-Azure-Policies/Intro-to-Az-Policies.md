@@ -146,7 +146,7 @@ We want to update this so that it will still allow the resource to be created wi
 
 Now that we have everything set we can save the policy definition
 
-![Editing the new definition](images/step-3-2-newediting-new-definition.gif)
+![Editing the new definition](images/step-3-2-editing-new-definition.gif)
 
 
 ### Step 4 - Assigning the Policy Definition 
