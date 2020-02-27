@@ -114,15 +114,15 @@ When assigning a policy you have to provide the following information
 ### Step 3 - Creating our Policy Definition
 Now that we understand the components of an Azure Policy lets create one for ourselves.  The goal of this policy will be to audit our resources to ensure they have the "CostCenter" tag.  
 
-To start let's get our definition setup.  From Azure Policy lets go to "Definitions" on the left.  
+To start let's get our definition created.  We are going to use a built-in definition as out starting point.  From Azure Policy lets go to "Definitions" on the left.  
 
 Filter the Category so we only see the "Tags" category.  
 
-Locate the "Require specified Tag" 
-
-![Selecting built-in definition](images/step-3-selecting-base-definition.gif)
+Locate and select the definition "Require specified Tag" 
 
 Create a duplicate of the definition so we can edit it.  
+
+![Selecting built-in definition](images/step-3-1-selecting-base-definition.gif)
 
 We are going to associate it with the current subscription and give it the name "Audit CostCenter Tag".  We will type in a brief description explaining the purpose of the definition. 
 
@@ -144,9 +144,9 @@ We want to update this so that it will still allow the resource to be created wi
     }
 ```
 
-!!! INSERT VIDEO OF UPDATING THE CODE AND SAVING THE DEFINITION
-
 Now that we have everything set we can save the policy definition
+
+![Editing the new definition](images/step-3-2-newediting-new-definition.gif)
 
 
 ### Step 4 - Assigning the Policy Definition 
