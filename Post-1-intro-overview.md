@@ -25,33 +25,15 @@ Step 2 - Understanding components of Azure policy
 - Assignments
     - Touch on initiative but mention you will cover this later
 
-Step 3 - Reviewing the existing policies
-- Go the Subscription --> Policies
-- Review what is in place (Example will be empty)
-
-Step 4 - Creating our first Audit policy
-- Describe the goal
-
-Step 5 - Create the policy definition
+Step 3 - Create the policy definition
 - Filter by category
 - Duplicate the policy 
 - Update the Effect from "Deny" to "Audit"
 - Save
 
-Step 6 - Create the assignment
+Step 4 - Create the assignment
 - Basics
 - Parameters
 
-Step 7 - Reviewing your Policy
+Step 5 - Reviewing your Policy
 - View resources that are in compliance and those that are not
-
-Next post 
-
-Step 2 - Configuring a 
-
-Auditing Example
-- Check for resources that are not tagged
-- Check for resources that do not have diagnostics enabled
-
-
-### Post: Leveraging Azure Policy to only allow for specific resource groups
