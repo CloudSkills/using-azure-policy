@@ -1,0 +1,10 @@
+# Post 2
+- Reference Post 1
+- Dive into the specifics of the parameters
+    - Leverages majority of ARM functionality
+    - Default Values 
+    - Allowed Values
+    - Prohibited values
+- Create an example only allows 3 specific VM sizes
+- Demo the what happens when creating a resources
+- Demo what happens when we try to alter an existing resource
