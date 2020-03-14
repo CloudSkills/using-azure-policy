@@ -1,5 +1,6 @@
 # Post 2
 - Reference Post 1
+- Cover Policy Effects
 - Dive into the specifics of the parameters
     - Leverages majority of ARM functionality
     - Default Values 
