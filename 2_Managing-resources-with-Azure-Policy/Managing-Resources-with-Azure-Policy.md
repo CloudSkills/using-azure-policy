@@ -1,32 +1,33 @@
 # Managing resources with Azure Policy
 
 ### Goals
-This is the second post in a series to help you become more familiar with Azure Policy.  If you haven't seen the [first post](https://cloudskills.io/blog/azure-policy) please take a look to help familiarize yourself with the components of Azure Policy.  
+This is the second post in a series to help you become more familiar with Azure Policy.  If you haven't seen the first post](https://cloudskills.io/blog/azure-policy), please take a look as it will help you familiarize yourself with the components of Azure Policy.  
 
-We will build upon that by learning more about the effects within Azure Policy.  We will also discuss how to create better parameters to simplify assigning our policy definitions.  
+We will build upon that by learning more about the effects within Azure Policy.  We will also discuss how to create better parameters in our policy definitions to help simplify our assignments.  
+
 
 
 ### Effects in Azure Policy
-Effects within Azure Policy is where you decide how Azure Policy will handle resources that meet the "if" condition of the policy definition.  At the time of this writing, there are 7 effects available.  2 more effects specifically for Kubernetes are available in preview, however, we will cover them at a later time.  
+Each Azure Policy definition has an effect defined so Azure will know how to handle the resources that meet the "if" condition.  At the time of this writing, there are 7 effects available.  2 more effects specifically for Kubernetes are available in preview, however, we will cover them at a later time.  
 
 - Append
-    - This allows you to append additional fields to a resource when it is created or updated.  
-    - For example, you need to ensure a certain IP range is always allowed to a storage account or a SQL server.
+ - This allows you to append additional fields to a resource when its created or updated.  
+ - For example, you need to ensure a certain IP range is always allowed to a storage account or a SQL server.
 - Audit
-    - This helps you identify a non-compliant resource.  It does not stop a resource from being created or modified, merely noting if it is in compliance or not.  This is what we configured in the [first post](https://cloudskills.io/blog/azure-policy) post.  
+ - This helps you identify a non-compliant resource.  It does not stop a resource from being created or modified, merely noting if it is in compliance or not.  This is what we configured in the [first post](https://cloudskills.io/blog/azure-policy) post.  
 - AuditIfNotExists
-    - Similar to audit, this helps you identify if a resource does not have the required properties defined as intended. 
-    - For example, you need to ensure that a VM has the diagnostic extension enabled
+ - Similar to audit, this helps you identify if a resource does not have the required properties defined as intended. 
+ - For example, you need to ensure that a VM has the diagnostic extension enabled
 - Deny
-    - This will prevent a new resource from being created or an existing resource from being modified.  We will be covering this later in this post.
+ - This will prevent a new resource from being created or an existing resource from being modified.  We will be covering this later in this post.
 - DeployIfNotExists
-    - This will allow you to modify a resource if it is not configured as intended.  Similar to AuditIfNotExists, except this allows you to apply a template to the resource to remediate the variance. 
+ - This will allow you to modify a resource if it is not configured as intended.  Similar to AuditIfNotExists, except this allows you to apply a template to the resource to remediate the variance. 
 - Disabled
-    - This is leveraged for testing a policy.  For example, if you want to create a policy to ensure the "if" statement is running properly but do not want the rest of the policy to apply. 
+ - This is for testing a policy.  For example, if you want to create a policy to ensure the "if" statement is working as intended but do not want the rest of the policy to apply. 
 - Modify
-    - This is used to manage the tags associated with a resource.  
+ - This is used to manage the tags associated with a resource.  
 
-One thing we also need to understand is the order in which Azure Policy effects are evaluated.  As a resource is being created or evaluated, Azure Policy will determine which policy assignments apply to that resource and then evaluates which ones should be applied first.  The order in which policies are applied is below.  
+One thing we also need to understand is the order in which Azure Policy effects are evaluated.  As a resource is being created or evaluated, Azure Policy will determine which policy assignments will apply to that resource.  It then evaluates which ones should be applied first.  The order in which policies are applied is below.  
 
 1. Disabled
 2. Append and Modify
@@ -34,27 +35,30 @@ One thing we also need to understand is the order in which Azure Policy effects 
 4. Audit
 5. AuditIfNotExists and DeployIfNotExists
 
-The reason the policies are applied in the order above is that some policy effects may make a change that would otherwise trigger a deny or audit effect.  For example, if we have a policy with the Modify effect set to define a CostCenter tag assigned to all resources in a resource group automatically.  We also have another policy that has a Deny effect for any resource without a CostCenter tag applied to the subscription.  
+This is because some policy effects may make a change to the resource that would otherwise trigger a deny or audit effect.  For example, if we have a policy with the Modify effect set to define a CostCenter tag to all resources in a resource group.  We also have another policy that has a Deny effect for any resource without a CostCenter tag applied to the subscription.  
 
-If the order that the policies were applied wasn't controlled and the policy with Deny applied first, any resource in that resource group would not be allowed.  Because we have the policies applied in a defined order, the Modify policy will run first, creating the CostCenter tag, and we don't have to worry about the Deny policy causing issues. 
+If the order that the policies applied wasn't controlled and the Deny policy applied first, any resource without CostCenter manually defined in that resource group would be prohibited.  Because we have the policies applied in a defined order, the Modify policy will run first, creating the CostCenter tag, and we don't have to worry about the Deny policy creating issues. 
+
 
 
 ### How to make better parameters in Azure Policy
-Ultimately our goal with any Azure Policy is to help us manage our environment with a minimal amount of manual intervention.  One way to help us is by utilizing parameters properties in our policy definitions so that it can be adjusted for each assignment rather than having to create a new definition each time.   
+Ultimately our goal with any Azure Policy is to help us manage our environment with a minimal amount of manual intervention.  One way to achieve this is by utilizing parameters properties in our policy definitions.  By using parameters our policies can be adjusted for each assignment rather than having to create a new definition each time.   
 
-The parameters in Azure Policy follow the same format as those for ARM templates.  You can create descriptions, allowed values, and even specify a default value for your parameters. This example below shows one that has all of these defined.  This example only allows you to select a storage SKU that is geographically replicated.  This would be a requirement if you need to support a workload that must be available if there was a regional outage.  
+The parameters in Azure Policy follow the same format as those for ARM templates.  You can create descriptions, allowed values, and even specify a default value for your parameters. The example below has these parameter properties defined.  
+
+This parameter only allows you to select a storage SKU that is geographically replicated.  This would be a requirement if you need to support a workload that must be available if there was a regional outage.  
 
 ```json
 "parameters": {
-  "allowedStorageSKU": {
-    "type": "string",
-    "allowedValues": [
-      "Standard_GRS",
-      "Standard_RAGRS",
+ "allowedStorageSKU": {
+ "type": "string",
+ "allowedValues": [
+ "Standard_GRS",
+ "Standard_RAGRS",
     ],
-    "defaultValue": "Standard_GRS",
-    "metadata": {
-      "description": "Select the type of replication type to use for the storage account."
+ "defaultValue": "Standard_GRS",
+ "metadata": {
+ "description": "Select the type of replication type to use for the storage account."
     }
   }
 }
@@ -66,44 +70,43 @@ Now let's take what we learned about effects and parameters and put it into acti
 
 To start we need to create our policy definition.  I've created a [sample policy](https://github.com/jf781/Azure.Policy.Demos/blob/master/Deny-Policy-Example-1.json) for you if you'd like to download and follow along.
 
-Looking at the policy rule in the definition, we can see that the policy is looking at the resource type "Microsoft.Computer/virtualMachines" or VM.   If the resource is a VM the policy rule will also look at the SKU selected.  If the VM SKU is not in parameter "listOfAllowedSKUs" then the policy will enforce the effect which is set to Deny.  
+Looking at the policy rule in the definition, we can see that the policy is looking at the resource type "Microsoft.Computer/virtualMachines" or VM.   If the resource is a VM the policy rule will also look at the SKU for that VM.  If the VM SKU is not listed in the parameter "listOfAllowedSKUs", then the policy will enforce the Deny effect.  
 
 ```json
 "policyRule": {
-  "if": {
-    "allOf": [
+ "if": {
+ "allOf": [
       {
-        "field": "type",
-        "equals": "Microsoft.Compute/virtualMachines"
+ "field": "type",
+ "equals": "Microsoft.Compute/virtualMachines"
       },
       {
-        "not": {
-          "field": "Microsoft.Compute/virtualMachines/sku.name",
-          "in": "[parameters('listOfAllowedSKUs')]"
+ "not": {
+ "field": "Microsoft.Compute/virtualMachines/sku.name",
+ "in": "[parameters('listOfAllowedSKUs')]"
         }
       }
     ]
   },
-  "then": {
-    "effect": "deny"
+ "then": {
+ "effect": "deny"
   }
 }
 ```
-
 Focusing now on the "listOfAllowedSKUs" parameter, you can see that we have supplied three VM SKUs in the allowedValues key.  
 
 ```json
-  "parameters": {
-    "listOfAllowedSKUs": {
-      "type": "Array",
-      "allowedValues": [
-          "Standard_DS1_v2",
-          "Standard_DS3_v2",
-          "Standard_DS5_v2"
+ "parameters": {
+ "listOfAllowedSKUs": {
+ "type": "Array",
+ "allowedValues": [
+ "Standard_DS1_v2",
+ "Standard_DS3_v2",
+ "Standard_DS5_v2"
       ],
-      "metadata": {
-        "displayName": "Allowed SKUs",
-        "description": "The list of SKUs that can be specified for virtual machines."
+ "metadata": {
+ "displayName": "Allowed SKUs",
+ "description": "The list of SKUs that can be specified for virtual machines."
       }
     }
   }
@@ -113,48 +116,54 @@ Now lets put in this in place.  I've already created the policy definition and w
 
 ![Assigning the Deny Policy](images/step-1-1-creating-deny-policy.gif)
 
-When we defined the parameters as part of the policy assignment we could select from the drop-down menu which of the allowed VM SKUs we wanted to apply.  By creating the list of SKUs in the policy definition it gives us the flexibility to fine-tune this further when we create the policy assignment.  Additionally, it helps reduces the chance that someone will "fat finger" a value by manually type it in.  
-
-Now that we have this in policy definition assigned let's see what happens when we try to create a VM using a SKU that is not allowed.  
+When we created our policy assignment we could select which of the defined SKUs wanted for this specific assignment.  By creating the list of SKUs in the policy definition it gives us the flexibility to fine-tune this further when we create the policy assignment.  Additionally, it helps reduces the chance that someone will "fat finger" a value by manually typing it in.
+ 
+Now that we have this in policy definition assigned, let's see what happens when we try to create a VM using a SKU that is not allowed.  
 
 ![Testing the deny policy](images/step-1-2-creating-deny-policy.gif)
 
-We attempted to create a VM  with a SKU of "Standard DS2 v2" and we were not allowed to create the VM because it failed validation.  Diving further into that we can see that it was prohibited because it violated the "Allowed VM SKUs for Lab02" policy assignment we created earlier.
+We attempted to create a VM  with a SKU of "Standard DS2 v2" and were unsuccessful because it failed validation.  Diving further into why it failed, we can see that it violated the "Allowed VM SKUs for Lab02" policy assignment we created earlier.
 
-To confirm our policy will work when we select one of the VM SKUs defined let's change the VM size to "Standard DS1 v2" and try again.   
+To confirm our policy is working as intended, let's change the VM size to "Standard DS1 v2" and try again.   
 
 ![Testing the deny policy](images/step-1-3-creating-deny-policy.gif)
 
-Perfect!  Our policy is doing exactly what we intended.  But we aren't done yet, we can make this even better. 
+Perfect!  Our policy is working as designed.  But we aren't done yet, we can make this even better. 
 
 ### Step 2 - Leveraging strongType for Parameters
 
-This is a perfect example of a policy that will do exactly what we want today.  But what happens when we want to allow a new VM SKU?  We would have manually update the existing definition to include the new SKU which seems simple enough.  However, we can't alter a policy definition if it is currently assigned.  We would have to delete any assignment using that definition, update the definition with the new SKU, and then re-create one or more assignments again.  There has to be an easier way...  
+This is a perfect example of a policy that will do exactly what we want today.  But what happens when we want to allow a new VM SKU?  We would have manually update the existing definition to include the new SKU which seems simple enough.  However, we can't alter a policy definition if it is currently assigned.  We would have to:
 
-Enter the parameter property "strongType".  When this property is defined as part of a parameter, it provides a multi-select list of available options to select from when creating the policy assignment.  We no longer have to manually specify the SKUs or other allowed values.  
+1. Delete any assignment using that definition
+2. Update the definition with the new SKU
+3. Re-create one or more assignments again.  
 
-Let's look at how we would set up the policy definition.  We got rid of the allowedValues and we added StrongType to the metadata property and specified 'vmSKUs'.  
+There has to be an easier way...  
+
+Enter the parameter property "strongType".  When this property is defined as part of a parameter, it provides a multi-select list of available options when creating the policy assignment.  We no longer have to manually specify the SKUs or other allowed values.  
+
+First, let's look at how we would set up the policy definition.  We got rid of the allowedValues and we added StrongType to the metadata property and specified 'vmSKUs'.  
 
 ```json
 "parameters": {
-  "listOfAllowedSKUs": {
-    "type": "Array",
-    "metadata": {
-      "displayName": "Allowed SKUs",
-      "description": "The list of SKUs that can be specified for virtual machines.",
-      "strongType": "vmSKUs"
+ "listOfAllowedSKUs": {
+ "type": "Array",
+ "metadata": {
+ "displayName": "Allowed SKUs",
+ "description": "The list of SKUs that can be specified for virtual machines.",
+ "strongType": "vmSKUs"
     }
   }
 }
 ```
 
-Let's take a look at how this works.  The policy assignment we created early has been deleted.  There is a [new policy definition](https://github.com/jf781/Azure.Policy.Demos/blob/master/Deny-Policy-Example-2.json) that is using strongType instead of allowedValues as shown in the code above.    We have started the policy assignment process and are ready to assign the updated policy definition.  (Note - You do not need to include "strongType" in the policy name.  That was just for demonstration purposes.) 
+Let's take a look at how this works.  The policy assignment we created early has been deleted.  There is a [new policy definition](https://github.com/jf781/Azure.Policy.Demos/blob/master/Deny-Policy-Example-2.json) that is using strongType instead of allowedValues as shown in the code above.    We have started the policy assignment process and are ready to assign the updated policy definition.  (Note - You do not need to include "strongType" in the policy name.  That was for demonstration purposes.) 
 
 ![Assigning the deny policy leveraging strongType](images/step-2-2-leveraging-strongtype-for-parameters.gif)
 
-As you can see our end result is exactly the same as before.  However, we are now able to make changes to allow other VM SKUs in the future on the fly without having to alter the policy definition or recreate any other assignments that may use that same definition. 
+As you can see our end result is exactly the same as before.  We are now able to make changes to allow other VM SKUs in the future without having to alter the policy definition or recreate any other assignments. 
 
-In this example, we are focused on providing a list of VM SKUs.  The strongType property can be used to select existing resources, locations, storage types, and SKUs, etc...  For example, if we wanted to have a policy definition that gave us the existing Log Analytics Workspaces you could set strongType to:
+In the example above, we are focused on providing a list of VM SKUs.  The strongType property can be used to select existing resources, locations, storage types, and SKUs, etc...  For example, if we wanted to have a policy definition that gave us the existing Log Analytics Workspaces you could set strongType to:
 
 ```json
 {
@@ -170,11 +179,13 @@ Or if we wanted to provide a list of existing storage accounts:
 }
 ```
 
-We can see all of the options for the strongType property by running the [Get-AzResourceProvider](https://docs.microsoft.com/en-us/powershell/module/az.resources/get-azresourceprovider?view=azps-3.6.1) PowerShell command. Under each of the providers, we can see the ResourceTypes property.  This is where we determine the specific property we would set as the stongType.  We can see in the screenshot below how the ResourceTypes under the Storage provider.   
+We can see the available options for the strongType property by running the [Get-AzResourceProvider](https://docs.microsoft.com/en-us/powershell/module/az.resources/get-azresourceprovider?view=azps-3.6.1) PowerShell command. Under each of the providers, we can see the ResourceTypes property.  This is where we determine the specific property we would set as the stongType.  
+
+We can see in the screenshot below how the ResourceTypes under the Storage provider.   
 
 ![Storage Provider ResourceTypes](images/step-2-1-leveraging-strongtype-for-parameters.png)
 
-There are also options for the stongType property that are not related to Resource Providers.  These can be useful as we will see in our example.
+There are also options for the stongType property that are not related to Resource Providers.  These can be useful as we saw in our example.
 
 - location
 - resourceTypes
@@ -182,5 +193,8 @@ There are also options for the stongType property that are not related to Resour
 - vmSKUs
 - existingResourceGroups
 
-The strongType is an incredibly powerful tool to use when designing our Azure Policies.  It helps us simplify the process of writing our policy definitions and makes them flexible as both our environment and Azure itself evolves. 
-Of equal importance, it also the person creating the policy assignments by removing some of the guesswork when defining the parameters and also reduces the potential for human error.  
+The strongType is an incredibly powerful tool to use when designing our Azure Policies.  It helps us simplify the process of writing our policy definitions.  More importantly,  it makes them flexible as both our environment and Azure itself evolves. 
+
+It also helps the person making the policy assignments by providing a list of options rather than manually entering the resource name or type.  
+
+Hopefully, this has helped you understand how to effects work in Azure Policy and how to create more effective parameters.   
