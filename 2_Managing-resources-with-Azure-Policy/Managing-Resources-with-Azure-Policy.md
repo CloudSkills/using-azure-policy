@@ -128,7 +128,7 @@ We attempted to create a VM  with a SKU of "Standard DS2 v2" and were unsuccessf
 
 To confirm our policy is working as intended, let's change the VM size to "Standard DS1 v2" and try again.   
 
-![Testing the deny policy](images/step-2-1-creating-deny-policy.gif)
+![Testing the deny policy](images/step-2-2-creating-deny-policy.gif)
 
 Perfect!  Our policy is working as designed.  But we aren't done yet, we can make this even better. 
 
@@ -169,7 +169,7 @@ In the example above, we are focused on providing a list of VM SKUs.  The strong
 
 ```json
 {
-"strongType": "Microsoft.OperationalInsights/workspaces"
+  "strongType": "Microsoft.OperationalInsights/workspaces"
 }
 ```
 
@@ -177,7 +177,7 @@ Or if we wanted to provide a list of existing storage accounts:
 
 ```json
 {
-"strongType": "Microsoft.Storage/storageAccounts"
+  "strongType": "Microsoft.Storage/storageAccounts"
 }
 ```
 
