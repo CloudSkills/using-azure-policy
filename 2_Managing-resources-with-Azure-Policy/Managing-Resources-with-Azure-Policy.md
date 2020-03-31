@@ -197,4 +197,4 @@ The strongType is an incredibly powerful tool to use when designing our Azure Po
 
 It also helps the person making the policy assignments by providing a list of options rather than manually entering the resource name or type.  
 
-Hopefully, this has helped you understand how to effects work in Azure Policy and how to create more effective parameters.   
+Hopefully, this has helped you understand how to effects work in Azure Policy and how to create more effective parameters.  Check back soon as we explore how to make updates to our resources using Azure Policy.  
