@@ -1,4 +1,4 @@
-# Leveraging Azure Policy to Manage Tagging
+# Managing Resource Tagging with Azure Policy
 
 ### Goals
 
