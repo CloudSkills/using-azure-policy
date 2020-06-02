@@ -62,7 +62,7 @@ You can find all of the example policy definitions [here](https://github.com/jf7
   "mode": "Indexed",
   "policyRule": {
     "if": {
-      "allOf": [
+      "anyOf": [
         {
           "field": "[concat('tags[', parameters('tagName1'), ']')]",
           "exists": "false"
